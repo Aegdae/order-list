@@ -6,12 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'mongodb.env'
+      envFilePath: 'MONGODB.env'
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -23,6 +24,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UsersModule,
     ProductsModule,
     OrdersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

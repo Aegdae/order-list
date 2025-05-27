@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -33,6 +33,7 @@ export class UsersService {
   }
 
   findAll() {
+    console.log('JWT SECRET:', process.env.JWT);
     return this.userSchema.find().populate('address');
   }
 
