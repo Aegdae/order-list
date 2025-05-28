@@ -14,7 +14,7 @@ export enum UserType {
 @Schema({ timestamps: true, optimisticConcurrency: true })
 export class User {
 
-    @Prop({ default: crypto.randomUUID() })
+    @Prop({ default: () => crypto.randomUUID() })
     _id: string;
 
     @Prop({ required: true })
@@ -30,7 +30,7 @@ export class User {
     address: Address
 
     @Prop({ type: [String], ref: Order.name })
-    productOders: Order[];
+    productOrders: Order[];
 
     @Prop()
     userType: UserType;

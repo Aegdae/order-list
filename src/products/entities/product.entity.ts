@@ -5,13 +5,13 @@ export type ProductDocument = HydratedDocument<Product>
 
 export enum ProductStatus {
     AVAILABLE = 'AVAILABLE',
-    SOLDOUT = 'SOLD OUT'
+    SOLDOUT = 'SOLD_OUT'
 }
 
 @Schema()
 export class Product {
 
-    @Prop({ default: crypto.randomUUID() })
+    @Prop({ default: () => crypto.randomUUID() })
     _id: string;
 
     @Prop()
@@ -21,9 +21,9 @@ export class Product {
     description?: string;
 
     @Prop()
-    quantity: number;
+    stock: number;
 
-    @Prop()
+    @Prop({ enum: ['AVAILABLE', 'SOLD_OUT'], default: 'AVAILABLE'})
     pStatus: ProductStatus
 
 }

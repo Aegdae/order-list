@@ -16,7 +16,7 @@ export enum StatusType {
 @Schema({ timestamps:true, optimisticConcurrency: true })
 export class Order {
     
-    @Prop({ default: crypto.randomUUID() })
+    @Prop({ default: () => crypto.randomUUID() })
     _id: string;
 
     @Prop({ type: String, ref: 'User' })
@@ -24,6 +24,9 @@ export class Order {
 
     @Prop({ type: String, ref: Product.name })
     productId: Product | string;
+
+    @Prop()
+    quantity: number
 
     @Prop()
     oStatus: StatusType

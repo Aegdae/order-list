@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Order } from './entities/order.entity';
+import { Order, StatusType } from './entities/order.entity';
 import { Model } from 'mongoose';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { ProductsService } from 'src/products/products.service';
 import { User } from 'src/users/entities/user.entity';
-import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class OrdersService {
@@ -11,7 +12,7 @@ export class OrdersService {
   constructor(
     @InjectModel(Order.name) private orderSchema: Model<Order>,
     @InjectModel(User.name) private userSchema: Model<User>,
-    @InjectModel(Product.name) private productSchema: Model<Product>
+    private productService: ProductsService
   ){}
 
   findAll() {
@@ -22,7 +23,23 @@ export class OrdersService {
     return this.orderSchema.findById(id);
   }
 
-  // async productBuy(){
-  //  
-  //}
+  // Onde cria a ordem
+  
+  async productBuy(createOrderDto: CreateOrderDto){
+    await this.productService.decreaseQuantity(createOrderDto)
+
+    const order = await this.orderSchema.create({
+      userId: createOrderDto.userId,
+      productId: createOrderDto.productId,
+      quantity: createOrderDto.quantity,
+      orderStatus: StatusType.SENT
+    });
+
+    await this.userSchema.findByIdAndUpdate(
+      createOrderDto.userId,
+      { $push: { productOrders: order._id } }
+    );
+
+    return order;
+  }
 }

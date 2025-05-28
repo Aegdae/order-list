@@ -14,7 +14,8 @@ export class UsersService {
     @InjectModel(User.name) private userSchema: Model<User>,
     @InjectModel(Address.name) private addressSchema: Model<Address>
   ) {}
-
+  
+  // Criar conta
   async create(createUserDto: CreateUserDto) {
 
     const hased_password = await bcrypt.hash(createUserDto.password, 12);
@@ -33,19 +34,27 @@ export class UsersService {
   }
 
   findAll() {
-    console.log('JWT SECRET:', process.env.JWT);
-    return this.userSchema.find().populate('address');
+    return this.userSchema.find().populate(['address', 'productOrders']);
   }
 
-  findOne(id: string) {
-    return this.userSchema.findById(id);
+  findOne(email: string) {
+    return this.userSchema.findById({ email }).populate(['address', 'productOrders']);
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userSchema.updateOne(updateUserDto);
+  // Atualizar conta
+  async update(id: string, updateUserDto: UpdateUserDto) {
+
+    const hased_password = await bcrypt.hash(updateUserDto.password, 12)
+
+    return this.userSchema.updateOne({
+      name: updateUserDto.name,
+      email: updateUserDto.email,
+      password: hased_password,
+      userType: UserType.USER
+    });
   }
 
-  //remove(id: string) {
-    //return this.userSchema.deleteOne(id);
-  //}
+  remove(id: string) {
+    return this.userSchema.deleteOne();
+  }
 }

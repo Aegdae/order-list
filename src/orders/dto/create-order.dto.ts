@@ -10,5 +10,7 @@ export class CreateOrderDto {
     
     userId: string;
     productId: string;
-    oStatus: StatusType;
+    quantity: number;
+    orderStatus: StatusType;
+
 }

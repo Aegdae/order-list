@@ -6,7 +6,7 @@ export type AddressDocument = HydratedDocument<Address>
 @Schema()
 export class Address {
 
-    @Prop({ default: crypto.randomUUID()})
+    @Prop({ default: () => crypto.randomUUID()})
     _id: string;
 
     @Prop()

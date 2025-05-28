@@ -8,18 +8,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/register')
-  create(@Body() createUserDto: CreateUserDto) {
+  register(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
   findAll() {
-    return this.usersService.findAll().populate('address');
+    return this.usersService.findAll().populate(['address', 'productOrders']);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id).populate('address');
+  findOne(@Param('id') email: string) {
+    return this.usersService.findOne(email);
   }
 
   @Patch(':id')

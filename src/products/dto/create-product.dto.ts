@@ -6,6 +6,6 @@ export enum ProductStatus {
 export class CreateProductDto {
     name: string;
     description?: string;
-    quantity: number;
+    stock: number;
     pStatus: ProductStatus;
 }
