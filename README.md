@@ -139,3 +139,7 @@ Os serviços dependem do Kafka, Zookeeper e MongoDB rodando, por isso é recomen
 A API está dividida em microserviços desacoplados e se comunicando via Kafka para garantir escalabilidade e manutenção facilitada.
 
 Atualmente, o frontend da aplicação está em desenvolvimento.
+
+## 📄 Licença
+
+Este projeto está licenciado sob os termos da [MIT License](LICENSE).
