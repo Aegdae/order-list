@@ -140,6 +140,6 @@ A API está dividida em microserviços desacoplados e se comunicando via Kafka p
 
 Atualmente, o frontend da aplicação está em desenvolvimento.
 
-## 📄 Licença
+## Licença
 
 Este projeto está licenciado sob os termos da [MIT License](LICENSE).
