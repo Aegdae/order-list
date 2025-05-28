@@ -1,10 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductStatus } from './entities/product.entity';
 import { Model } from 'mongoose';
-import { CreateOrderDto } from 'src/orders/dto/create-order.dto';
 
 @Injectable()
 export class ProductsService {
@@ -38,36 +37,64 @@ export class ProductsService {
       throw new NotFoundException("Product not found")
     }
 
-    return await this.productSchema.updateOne({
-      name: updateProductDto.name,
-      description: updateProductDto.description,
-    });
+    return await this.productSchema.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          name: updateProductDto.name,
+          description: updateProductDto.description,
+        }
+      }
+    );
   }
 
   remove(id: string) {
     return this.productSchema.deleteOne({ _id: id});
   }
 
-  // Função para fazer pedido
+  // Atualizar o estoque
+  async updateStock(id: string, updateProductDto: UpdateProductDto) {
 
-  async decreaseQuantity(createOrderDto: CreateOrderDto): Promise<Product> {
-    
-    const product = await this.productSchema.findById(createOrderDto.productId)
+    const product = await this.productSchema.findById(id)
 
-    if(!product) {
+    if (!product) {
       throw new NotFoundException("Product not found")
     }
 
-    if(product.stock < createOrderDto.quantity) {
-      throw new BadRequestException('Insufficient stock')
+    const newStock = updateProductDto.stock;
+    const updateStatus = newStock > 0 ? ProductStatus.AVAILABLE : ProductStatus.SOLDOUT;
+
+    return await this.productSchema.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          stock: newStock,
+          pStatus: updateStatus
+        }, 
+      },
+      { new: true }      
+    );
+
+  }
+
+
+  // Função diminuir estoque apos a order
+  async decreaseQuantity(id: string, quantity: number) {
+
+    const product = await this.productSchema.findById(id);
+
+    if(!product) {
+      throw new NotFoundException("Product not found");
     }
 
-    product.stock -= createOrderDto.quantity;
+    const newStock = product.stock -quantity
+    const updateStatus = newStock > 0 ? ProductStatus.AVAILABLE : ProductStatus.SOLDOUT
 
-    if (product.stock === 0) {
-      product.pStatus = ProductStatus.SOLDOUT
-    }
-    
-    return product.save();
+    const result =  await this.productSchema.updateOne(
+      { _id: id },
+      { $set: { stock: newStock, pStatus: updateStatus }}
+    );
+
+    return result;
   }
 }

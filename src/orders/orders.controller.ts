@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body} from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, BadRequestException} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
@@ -9,7 +9,18 @@ export class OrdersController {
 
   @Post('/send-order')
   async sendOrder(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.productBuy(createOrderDto)
+    
+    const response = await this.ordersService.validateOrder(createOrderDto.productId, createOrderDto.quantity)
+
+    if (response === true) {
+      const order = await this.ordersService.productBuy(createOrderDto);
+      return {
+        message: 'Order created',
+        orderId: order._id
+      }
+    } else {
+      throw new BadRequestException('insufficient stock');
+    }    
   }
 
   @Get()
@@ -20,6 +31,12 @@ export class OrdersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ordersService.findOne(id);
+  }
+
+  @Get(':id')
+  async validateOrder(@Param() productId: string) {
+    const quantity: number = 5;
+    this.ordersService.validateOrder(productId, quantity)
   }
   
 }

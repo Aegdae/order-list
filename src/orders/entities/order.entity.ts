@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { Product } from "../../products/entities/product.entity";
 import { User } from "../../users/entities/user.entity";
 
@@ -10,7 +10,7 @@ export enum StatusType {
     PREPARING = 'PREPARING',
     SENT = 'SENT',
     DELIVERED = 'DELIVERED',
-    CANCELED = 'CANCELED'
+    CANCELED = 'CANCELED',
 }
 
 @Schema({ timestamps:true, optimisticConcurrency: true })

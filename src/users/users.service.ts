@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,7 +15,6 @@ export class UsersService {
     @InjectModel(Address.name) private addressSchema: Model<Address>
   ) {}
   
-  // Criar conta
   async create(createUserDto: CreateUserDto) {
 
     const hased_password = await bcrypt.hash(createUserDto.password, 12);
@@ -38,10 +37,9 @@ export class UsersService {
   }
 
   findOne(email: string) {
-    return this.userSchema.findById({ email }).populate(['address', 'productOrders']);
+    return this.userSchema.findOne({ email }).populate(['address', 'productOrders']);
   }
 
-  // Atualizar conta
   async update(id: string, updateUserDto: UpdateUserDto) {
 
     const hased_password = await bcrypt.hash(updateUserDto.password, 12)
@@ -53,6 +51,18 @@ export class UsersService {
       userType: UserType.USER
     });
   }
+
+  async addOrder(userId: string, orderId: string) {
+    return this.userSchema.findByIdAndUpdate(
+      userId,
+      {
+        $push: { productOrders: orderId }
+      },
+      { new: true}
+    );
+  }
+
+
 
   remove(id: string) {
     return this.userSchema.deleteOne();
